@@ -8,7 +8,6 @@ from matplotlib.figure import Figure
 from MetaTrader import MT5Import
 from Candlestick import graph_data_ohlc
 
-
 import numpy as np
 
 class My_point:
@@ -24,9 +23,24 @@ fig=Figure(figsize=(5,4),dpi=100)
 
 t=np.arange(0,500, 1)
 
+data = MT5Import()
+closep=[]
+highp=[]
+lowp=[]
+openp=[]
+time=[]
+for val in data:
+    time.append(val[0])
+    closep.append(val[1])
+    highp.append(val[2])
+    lowp.append(val[3])
+    openp.append(val[4])
+
+
+candles=graph_data_ohlc(closep, highp, lowp, openp, time)
 #wykres kursu
-plt1=fig.add_subplot(111)
-plt1.plot(t, np.sin(t/50)) #później może Ticker zamiast plot
+#plt1=fig.add_subplot(111)
+#plt1.plot(t, np.sin(t/50)) #później może Ticker zamiast plot
 #wykres sygnalu, macd i histogram
 fig1=Figure(figsize=(5,4),dpi=100)
 plt=fig1.add_subplot(111)
@@ -42,7 +56,7 @@ for i in range(0,t.size,1):
         elif (values[i-1]>=0 and values[i]<0):
             points.append(My_point(t[i],macd[i],False))
 
-plt.plot(t,sig,'b.')
+plt.plot(t,sig,'b')
 plt.plot(t,macd,'y')
 plt.step(t,values)
 plt.axhline()
@@ -57,7 +71,7 @@ for i in range(0,len(points),1):
 
 
 #Reszta z tworzenia GUI
-canvas = FigureCanvasTkAgg(fig, master = root) #A tk.DrawingArea.
+canvas = FigureCanvasTkAgg(candles, master = root) #A tk.DrawingArea.
 canvas.draw()
 canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
 
