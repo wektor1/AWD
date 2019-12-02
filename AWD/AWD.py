@@ -5,6 +5,9 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
+from MetaTrader import MT5Import
+from Candlestick import graph_data_ohlc
+
 
 import numpy as np
 
@@ -41,7 +44,7 @@ for i in range(0,t.size,1):
 
 plt.plot(t,sig,'b.')
 plt.plot(t,macd,'y')
-plt.plot(t,values,'g|')
+plt.step(t,values)
 plt.axhline()
 
 
