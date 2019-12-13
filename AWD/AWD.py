@@ -44,21 +44,44 @@ candles=graph_data_ohlc(closep, highp, lowp, openp, time)
 #wykres sygnalu, macd i histogram
 fig1=Figure(figsize=(5,4),dpi=100)
 plt=fig1.add_subplot(111)
-sig=0.7*np.sin(2*np.pi*t/120) #tymczasowe funkcje
-macd=0.6*np.cos(3*np.pi*t/100) #tymczasowe funkcje
+def ema(close, span_):
+    emas = [0] * (len(close)+1)
+    weights = [0] * len(close)
+    for i in range(0,span_-1):
+        weights[i] = span_ - i
+    for i in range (1, len(close)):
+        emas[i] = (close[len(close)-i] - emas[i-1]) * weights[i-1]* (2/(i+1)) + emas[i-1]
+    emas.remove(0)
+    return emas
+
+cenka = pd.DataFrame(data = closep)
+ema26 = cenka.ewm(span =26).mean() 
+ema12 = cenka.ewm(span = 12).mean()
+macd = []
+for i in range (0,len(ema26)):
+    macd.append(ema26.values[i] - ema12.values[i])
+sygnal = pd.DataFrame(data = macd)
+sig = sygnal.ewm(span= 9).mean()
+
+#sig=0.7*np.sin(2*np.pi*t/120) #tymczasowe funkcje
+#macd=0.6*np.cos(3*np.pi*t/100) #tymczasowe funkcje
 values=[]
 points=[]
-for i in range(0,t.size,1):
-    values.append(macd[i]-sig[i])
+for i in range(0,len(macd),1):
+    values.append(macd[i]-sig.values[i])
     if i>0:
         if (values[i]>=0 and values[i-1]<0):
             points.append(My_point(t[i],macd[i],True))
         elif (values[i-1]>=0 and values[i]<0):
             points.append(My_point(t[i],macd[i],False))
 
-plt.plot(t,sig,'b')
-plt.plot(t,macd,'y')
-plt.step(t,values)
+
+xax = [1] * len(values)
+for i in range (0,len(values)):
+    values[i] = values[i][0]
+plt.plot(sig,'b')
+plt.plot(macd,'y')
+#plt.plot(values) - histogram
 plt.axhline()
 
 
