@@ -21,7 +21,7 @@ root.wm_title("AWD")
 
 fig=Figure(figsize=(5,4),dpi=100)
 
-t=np.arange(0,500, 1)
+t=np.arange(0,5000, 1)
 
 data = MT5Import()
 closep=[]
