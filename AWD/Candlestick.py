@@ -2,11 +2,12 @@ from matplotlib import pyplot as plt
 import matplotlib
 from mpl_finance import candlestick_ohlc
 import matplotlib.ticker as mticker
+from matplotlib.figure import Figure
 import matplotlib.ticker as ticker
 
 
 def graph_data_ohlc(closep, highp, lowp, openp, time):
-    fig = plt.figure()
+    fig = plt.figure(figsize = [5.0, 3.0])
     ax1 = plt.subplot2grid((1,1), (0,0))
     
     
