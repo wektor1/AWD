@@ -18,6 +18,7 @@ class Example(Frame):
         super().__init__()
 
         self.initUI()
+        
        
 
     def initUI(self):
@@ -191,6 +192,7 @@ def main(root):
 if __name__ == '__main__':
     root = ttk.Tk()
     root.title("Tk example")
+    root.state('zoomed')
     s = Style(root)
     s.theme_use('clam')
     main(root)

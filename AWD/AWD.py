@@ -8,6 +8,10 @@ from matplotlib.figure import Figure
 from MetaTrader import MT5Import
 from Candlestick import graph_data_ohlc
 import statistics as st
+import datetime as dt
+import matplotlib.pyplot as plt2
+import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
 
 import numpy as np
 
@@ -19,10 +23,9 @@ class My_point:
         self.Buy=Buy
 
 def output(self, date1, date2, tick, currency, sugestion ):
-    #root=tkinter.Tk()
-    #root.wm_title("AWD")
+
     root=self
-    fig=Figure(figsize=(5,4),dpi=100)
+
     
     t=np.arange(0,5000, 1)
     
@@ -42,12 +45,7 @@ def output(self, date1, date2, tick, currency, sugestion ):
     annual_volatility = st.stdev(closep) * np.sqrt(trading_days) * 100
     
     candles=graph_data_ohlc(closep, highp, lowp, openp, time)
-    #wykres kursu
-    #plt1=fig.add_subplot(111)
-    #plt1.plot(t, np.sin(t/50)) #później może Ticker zamiast plot
-    #wykres sygnalu, macd i histogram
-    fig1=Figure(figsize=(5,3),dpi=100)
-    plt=fig1.add_subplot(111)
+
     
     cenka = pd.DataFrame(data = closep)
     ema26 = cenka.ewm(span =26).mean() 
@@ -58,8 +56,7 @@ def output(self, date1, date2, tick, currency, sugestion ):
     sygnal = pd.DataFrame(data = macd)
     sig = sygnal.ewm(span= 9).mean()
     
-    #sig=0.7*np.sin(2*np.pi*t/120) #tymczasowe funkcje
-    #macd=0.6*np.cos(3*np.pi*t/100) #tymczasowe funkcje
+
     values=[]
     points=[]
     tactic = str()
@@ -80,22 +77,34 @@ def output(self, date1, date2, tick, currency, sugestion ):
     anual_vol = "Annualised Volatility: "+ str(annual_volatility) +"%"
     sugestion.delete('1.0',tkinter.END)
     sugestion.insert(tkinter.INSERT, tactic + "\n" + anual_vol)
-    
+    fig1 = plt2.figure(figsize = [5.0, 3.0])
     xax = [1] * len(values)
     for i in range (0,len(values)):
         values[i] = values[i][0]
-    plt.plot(sig,'b')
-    plt.plot(macd,'y')
-    #plt.plot(values) - histogram
-    plt.axhline()
-    
+
+    ax1 = plt2.subplot2grid((1,1), (0,0))
+    ax1.xaxis.set_major_locator(ticker.MaxNLocator(10))
+    def mydate(x,pos):
+        try:
+            return time[int(x)]
+        except IndexError:
+            return ''
+    ax1.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
+    for label in ax1.xaxis.get_ticklabels():
+        label.set_rotation(5)
+    ax1.grid(True)
+
+    plt2.plot( sig,'b')
+    plt2.plot( macd,'y')
+
+    plt2.title('MACD')
     
     #Punkty kup/sprzedaj
     for i in range(0,len(points),1):
         if points[i].Buy == True:
-            plt.plot(points[i].X, points[i].Y, 'go')
+            plt2.plot(points[i].X, points[i].Y, 'go')
         if points[i].Buy == False:
-            plt.plot(points[i].X, points[i].Y, 'ro')
+            plt2.plot(points[i].X, points[i].Y, 'ro')
     
     #Reszta z tworzenia GUI
     canvas = FigureCanvasTkAgg(candles, master = root) #A tk.DrawingArea.
@@ -106,10 +115,6 @@ def output(self, date1, date2, tick, currency, sugestion ):
     canvas.draw()
     canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
     
-    toolbar = NavigationToolbar2Tk(canvas, root)
-    toolbar.update()
-    canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand =1)
-    canvas.mpl_connect("key_press_event",on_key)
 
 
 def ema(close, span_):
@@ -136,7 +141,5 @@ def quit():
 
     button =tkinter.Button(master=root, text="Quit",command=quit)
     button.pack(side=tkinter.BOTTOM)
-
-#tkinter.mainloop()
 
 

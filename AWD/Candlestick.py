@@ -26,7 +26,7 @@ def graph_data_ohlc(closep, highp, lowp, openp, time):
         x+=1
     candlestick_ohlc(ax1, ohlc, width=0.4, colorup='#77d879', colordown='#db3f3f')
     for label in ax1.xaxis.get_ticklabels():
-        label.set_rotation(25)
+        label.set_rotation(15)
     ax1.xaxis.set_major_locator(mticker.MaxNLocator(10))
     def mydate(x,pos):
         try:
@@ -36,7 +36,7 @@ def graph_data_ohlc(closep, highp, lowp, openp, time):
 
     ax1.xaxis.set_major_formatter(ticker.FuncFormatter(mydate))
     ax1.grid(True)
-    plt.xlabel('Candle')
+    #plt.xlabel('Candle')
     plt.ylabel('Price')
     plt.title('Candlestick sample representation')
     
