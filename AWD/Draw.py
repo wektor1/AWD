@@ -5,19 +5,80 @@ from tkinter import Tk, RIGHT, BOTH, RAISED
 from tkinter.ttk import Frame, Button, Style
 from tkcalendar import Calendar, DateEntry
 from Invest_win import Invest_win
+#from Param_win import Param_win
 import AWD as awd
 import datetime
 
 
 
+signal_span=9
+slow_span=26
+fast_span =12
+    
+class Param_win:
+    def __init__(self, root):
+        
+        self.root = root
+        self.root.geometry("300x130+500+200")
+        frame1 = Frame(self.root)
+        frame1.pack(fill=X)
+        lbl1 = Label(frame1, text="Signal span:", width=20)
+        lbl1.pack(side=LEFT, padx=5, pady=5)
+        global T9
+        T9 = Text(frame1, height=1)
+        T9.pack(fill=X, padx=5, pady=5)
+        global signal_span, fast_span, slow_span
+        T9.insert(END, str(signal_span))
+
+        frame2 = Frame(self.root)
+        frame2.pack(fill=X)
+        lbl2 = Label(frame2, text="Fast EMA span:", width=20)
+        lbl2.pack(side=LEFT, padx=5, pady=5)
+        global T10
+        T10 = Text(frame2, height=1)
+        T10.pack(fill=X, padx=5, pady=5)
+        
+        T10.insert(END, str(fast_span))
+
+        frame3 = Frame(self.root)
+        frame3.pack(fill=X)
+        lbl3 = Label(frame3, text="Slow EMA span:", width=20)
+        lbl3.pack(side=LEFT, padx=5, pady=5)
+        global T11
+        T11 = Text(frame3, height=1)
+        T11.pack(fill=X, padx=5, pady=5)
+        
+        T11.insert(END, str(slow_span))
+
+        frame4 = Frame(self.root)
+        frame4.pack(fill=X)
+        closeButton1 = Button(frame4, command=self.set_span, text="Set values")
+        closeButton1.pack(side=LEFT, padx=5, pady=5)
+
+    def set_span(self):
+        d1 = T9.get("1.0", 'end-1c')
+        if (d1.isdigit() and d1 != ""):
+            global signal_span
+            signal_span = int(d1)
+        d1 = T10.get("1.0", 'end-1c')
+        if (d1.isdigit() and d1 != ""): 
+            global fast_span
+            fast_span= int(d1)
+        d1 = T11.get("1.0", 'end-1c')
+        if (d1.isdigit() and d1 != ""): 
+            global slow_span
+            slow_span = int(d1)
+        self.root.destroy()
+
 
 class Example(Frame):
-    
-    
 
     def __init__(self):
         super().__init__()
-        global investing_data
+        global investing_data, signal_span, slow_span, fast_span
+        signal_span=9
+        slow_span=26
+        fast_span =12
         investing_data = []
         self.initUI()
         
@@ -36,7 +97,7 @@ class Example(Frame):
         lbl1.pack(side=LEFT, padx=5, pady=5)
         global entry1
         self.tkvar = StringVar()
-        choices_course = {'EURUSD', 'USDCHF'}
+        choices_course = {'EURUSD', 'USDCHF', 'GBPUSD', 'USDJPY'}
         self.tkvar.set('EURUSD')  # set the default option
         entry1 = OptionMenu(frame1, self.tkvar, *choices_course)
         entry1.pack(fill=X, padx=5, expand=True)
@@ -109,6 +170,8 @@ class Example(Frame):
         closeButton8 = Button(frame5, command= lambda: self.invest(Invest_win), text="Calculate income")
         closeButton8.pack(side=LEFT, padx=5, pady=5)
 
+        closeButton9 = Button(frame5, command= lambda: self.parameters(Param_win), text="MACD parameters")
+        closeButton9.pack(side=LEFT, padx=5, pady=5)
 
     def example1(self):
         global top
@@ -204,7 +267,7 @@ class Example(Frame):
                 self.df.destroy()
                 self.df = Frame(self.frame4, height=40)
                 self.df.pack(fill=BOTH, pady=5, padx=5, expand=True)
-                investing_data = awd.output(self.df, d1, d2, self.tkvar2, self.tkvar, self.sugest)
+                investing_data = awd.output(self.df, d1, d2, self.tkvar2, self.tkvar, self.sugest, signal_span, slow_span, fast_span)
         else:
             '''tutaj co sie dzieje jak jest nie ma wprowadzonej daty'''
             wrong2 = Toplevel(root)
@@ -223,6 +286,17 @@ class Example(Frame):
                 window = ttk.Toplevel(root)
                 Win_class(window, investing_data)
                 window.mainloop()
+
+    def parameters(self, Win_class):
+        global window2
+        try:
+            
+            if window2.state() == "normal": window2.focus()
+        except:    
+            
+            window2 = ttk.Toplevel(root)
+            Win_class(window2)
+            window2.mainloop()
 
 
 def main(root):

@@ -23,10 +23,9 @@ class My_point:
         self.Y=Y
         self.Buy=Buy
 
-def output(self, date1, date2, tick, currency, sugestion ):
+def output(self, date1, date2, tick, currency, sugestion, signal_span, slow_span, fast_span):
 
     root=self
-
     
     t=np.arange(0,7000, 1)
     
@@ -49,13 +48,13 @@ def output(self, date1, date2, tick, currency, sugestion ):
 
     
     cenka = pd.DataFrame(data = closep)
-    ema26 = cenka.ewm(span =26).mean() 
-    ema12 = cenka.ewm(span = 12).mean()
+    ema26 = cenka.ewm(span =slow_span).mean() 
+    ema12 = cenka.ewm(span = fast_span ).mean()
     macd = []
     for i in range (0,len(ema26)):
         macd.append(ema26.values[i] - ema12.values[i])
     sygnal = pd.DataFrame(data = macd)
-    sig = sygnal.ewm(span= 9).mean()
+    sig = sygnal.ewm(span= signal_span).mean()
     
     
     values=[]
