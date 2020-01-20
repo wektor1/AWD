@@ -4,6 +4,7 @@ from tkinter import StringVar
 from tkinter import Tk, RIGHT, BOTH, RAISED
 from tkinter.ttk import Frame, Button, Style
 from tkcalendar import Calendar, DateEntry
+from Invest_win import Invest_win
 import AWD as awd
 import datetime
 
@@ -16,7 +17,8 @@ class Example(Frame):
 
     def __init__(self):
         super().__init__()
-
+        global investing_data
+        investing_data = []
         self.initUI()
         
        
@@ -25,6 +27,7 @@ class Example(Frame):
 
         self.master.title("Asystent wspomagania decyzji maklerskich")
         self.pack(fill=BOTH, expand=True)
+        
 
         '''frame dropdown z wyboerwm kursu'''
         frame1 = Frame(self)
@@ -103,6 +106,9 @@ class Example(Frame):
         closeButton5 = Button(frame5, command=self.accept, text="Predict")
         closeButton5.pack(side=LEFT, padx=5, pady=5)
 
+        closeButton8 = Button(frame5, command= lambda: self.invest(Invest_win), text="Calculate income")
+        closeButton8.pack(side=LEFT, padx=5, pady=5)
+
 
     def example1(self):
         global top
@@ -146,7 +152,7 @@ class Example(Frame):
         global wrong2
         wrong2.destroy()
 
-    def accept(self):
+    def correctness_check(self):
         global T, T2, entry1, wrong, wrong2
         d1=T.get("1.0",'end-1c')
         d2=T2.get("1.0",'end-1c')
@@ -164,13 +170,41 @@ class Example(Frame):
                 closeButton6 = Button(wrong, command=self.quit3, text="Ok")
                 closeButton6.pack(padx=5, pady=5)
             else:
+                return True
+        else:
+            '''tutaj co sie dzieje jak jest nie ma wprowadzonej daty'''
+            wrong2 = Toplevel(root)
+            ttk.Label(wrong2, text='Enter date').pack(padx=10, pady=10)
+            closeButton7 = Button(wrong2, command=self.quit4, text="Ok")
+            closeButton7.pack(padx=5, pady=5)
+        return False
+
+    def accept(self):
+        global T, T2, entry1, wrong, wrong2, investing_data
+        d1=T.get("1.0",'end-1c')
+        d2=T2.get("1.0",'end-1c')
+        parsed1 = d1.split('/')
+        parsed2 = d2.split('/')
+        print(tuple(parsed1))
+        print(tuple(parsed2))
+        if(d1 != "" and d2 != ""):
+            date1 = datetime.datetime(2000+int(parsed1[2]),int(parsed1[0]),int(parsed1[1]))
+            date2 = datetime.datetime(2000 + int(parsed2[2]), int(parsed2[0]), int(parsed2[1]))
+            if(date1 >= date2):
+                '''tutaj co sie dzieje jak jest zla data'''
+                wrong = Toplevel(root)
+                ttk.Label(wrong, text='Invalid date').pack(padx=10, pady=10)
+                closeButton6 = Button(wrong, command=self.quit3, text="Ok")
+                closeButton6.pack(padx=5, pady=5)
+            else:
+                
                 d1=date1
                 d2=date2
                 self.df.pack_forget()
                 self.df.destroy()
                 self.df = Frame(self.frame4, height=40)
                 self.df.pack(fill=BOTH, pady=5, padx=5, expand=True)
-                awd.output(self.df, d1, d2, self.tkvar2, self.tkvar, self.sugest)
+                investing_data = awd.output(self.df, d1, d2, self.tkvar2, self.tkvar, self.sugest)
         else:
             '''tutaj co sie dzieje jak jest nie ma wprowadzonej daty'''
             wrong2 = Toplevel(root)
@@ -178,11 +212,17 @@ class Example(Frame):
             closeButton7 = Button(wrong2, command=self.quit4, text="Ok")
             closeButton7.pack(padx=5, pady=5)
 
-        
-
-
-
-
+    def invest(self, Win_class):
+        global investing_data
+        if( self.correctness_check):
+            global window
+            try:
+                if window.state() == "normal": window.focus()
+            except:
+                
+                window = ttk.Toplevel(root)
+                Win_class(window, investing_data)
+                window.mainloop()
 
 
 def main(root):

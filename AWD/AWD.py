@@ -12,6 +12,7 @@ import datetime as dt
 import matplotlib.pyplot as plt2
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
+import copy
 
 import numpy as np
 
@@ -27,7 +28,7 @@ def output(self, date1, date2, tick, currency, sugestion ):
     root=self
 
     
-    t=np.arange(0,5000, 1)
+    t=np.arange(0,7000, 1)
     
     data = MT5Import(date1, date2, currency, tick)
     closep=[]
@@ -56,7 +57,7 @@ def output(self, date1, date2, tick, currency, sugestion ):
     sygnal = pd.DataFrame(data = macd)
     sig = sygnal.ewm(span= 9).mean()
     
-
+    
     values=[]
     points=[]
     tactic = str()
@@ -67,6 +68,10 @@ def output(self, date1, date2, tick, currency, sugestion ):
                 points.append(My_point(t[i],macd[i],True))
             elif (values[i-1]>=0 and values[i]<0):
                 points.append(My_point(t[i],macd[i],False))
+    
+    data_to_return = []
+    data_to_return.append(closep)
+    data_to_return.append(points)
 
     last_pos = points[len(points)-1]
     if last_pos.Buy == True:
@@ -114,6 +119,8 @@ def output(self, date1, date2, tick, currency, sugestion ):
     canvas = FigureCanvasTkAgg(fig1, master = root) #A tk.DrawingArea.
     canvas.draw()
     canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+
+    return data_to_return
     
 
 
