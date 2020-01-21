@@ -93,7 +93,7 @@ class Example(Frame):
         '''frame dropdown z wyboerwm kursu'''
         frame1 = Frame(self)
         frame1.pack(fill=X)
-        lbl1 = Label(frame1, text="Rodzaj kursu", width=15)
+        lbl1 = Label(frame1, text="Course type", width=15)
         lbl1.pack(side=LEFT, padx=5, pady=5)
         global entry1
         self.tkvar = StringVar()
@@ -151,7 +151,7 @@ class Example(Frame):
         self.frame4 = Frame(self)
         self.frame4.pack(fill=BOTH, expand=True)
 
-        lbl4 = Label(self.frame4, text="Wyniki", width=15)
+        lbl4 = Label(self.frame4, text="Results", width=15)
         lbl4.pack(side=LEFT, anchor=N, padx=5, pady=5)
 
         self.sugest = Text(self.frame4, height = 2, width = 25)
@@ -164,7 +164,7 @@ class Example(Frame):
         '''frame z przyciskiem predykcji'''
         frame5 = Frame(self)
         frame5.pack(fill=X)
-        closeButton5 = Button(frame5, command=self.accept, text="Predict")
+        closeButton5 = Button(frame5, command=self.accept, text="Analyze")
         closeButton5.pack(side=LEFT, padx=5, pady=5)
 
         closeButton8 = Button(frame5, command= lambda: self.invest(Invest_win), text="Calculate income")

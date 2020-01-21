@@ -52,7 +52,7 @@ def output(self, date1, date2, tick, currency, sugestion, signal_span, slow_span
     ema12 = cenka.ewm(span = fast_span ).mean()
     macd = []
     for i in range (0,len(ema26)):
-        macd.append(ema26.values[i] - ema12.values[i])
+        macd.append(ema12.values[i] - ema26.values[i])
     sygnal = pd.DataFrame(data = macd)
     sig = sygnal.ewm(span= signal_span).mean()
     
